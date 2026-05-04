@@ -10,86 +10,83 @@ import streamlit as st
 from streamlit_folium import st_folium
 
 
-API_URL = "http://127.0.0.1:8000/route"
+API_URL = "http://127.0.0.1:8000/route-by-name"
 
 
 st.set_page_config(
-    page_title="Route Optimization Platform",
+    page_title="Eco-Router",
     layout="wide",
 )
 
-st.title("🚗 Intelligent Route Optimization")
+st.title("🚗 Eco-Router")
 st.markdown(
-    "Find the optimal route using machine learning and graph algorithms."
+    "Find an optimized road route using machine learning and graph algorithms."
 )
 
-# Keeps the latest route visible even when Streamlit reruns,
-# such as after zooming or panning the map.
 if "route_result" not in st.session_state:
     st.session_state.route_result = None
 
+if "route_error" not in st.session_state:
+    st.session_state.route_error = None
 
-start_lat = st.number_input(
-    "Start Latitude",
-    value=28.6129,
-    format="%.6f",
+
+start_location = st.text_input(
+    "Start location",
+    value="India Gate, New Delhi",
+    placeholder="Example: India Gate, New Delhi",
 )
 
-start_lon = st.number_input(
-    "Start Longitude",
-    value=77.2295,
-    format="%.6f",
-)
-
-end_lat = st.number_input(
-    "Destination Latitude",
-    value=28.6315,
-    format="%.6f",
-)
-
-end_lon = st.number_input(
-    "Destination Longitude",
-    value=77.2167,
-    format="%.6f",
+end_location = st.text_input(
+    "Destination",
+    value="Connaught Place, New Delhi",
+    placeholder="Example: Connaught Place, New Delhi",
 )
 
 
 if st.button("Find Route", type="primary"):
-    request_payload = {
-        "start_lat": start_lat,
-        "start_lon": start_lon,
-        "end_lat": end_lat,
-        "end_lon": end_lon,
-    }
+    st.session_state.route_error = None
 
-    try:
-        with st.spinner("Computing optimized route..."):
-            response = requests.post(
-                API_URL,
-                json=request_payload,
-                timeout=120,
-            )
-
-        response.raise_for_status()
-
-        st.session_state.route_result = response.json()
-
-    except requests.RequestException as error:
+    if not start_location.strip() or not end_location.strip():
         st.session_state.route_result = None
-        st.error(
-            "Could not connect to the routing API. "
-            "Make sure FastAPI is running on port 8000."
+        st.session_state.route_error = (
+            "Enter both a start location and a destination."
         )
-        st.exception(error)
+    else:
+        try:
+            with st.spinner("Finding locations and computing route..."):
+                response = requests.post(
+                    API_URL,
+                    json={
+                        "start_location": start_location,
+                        "end_location": end_location,
+                    },
+                    timeout=120,
+                )
+
+            if not response.ok:
+                error_detail = response.json().get(
+                    "detail",
+                    "The route could not be computed.",
+                )
+                raise ValueError(error_detail)
+
+            st.session_state.route_result = response.json()
+
+        except (requests.RequestException, ValueError) as error:
+            st.session_state.route_result = None
+            st.session_state.route_error = str(error)
 
 
-# This stays outside the button block so it persists after map interaction.
+if st.session_state.route_error:
+    st.error(st.session_state.route_error)
+
+
 if st.session_state.route_result is not None:
     result = st.session_state.route_result
     coordinates = result.get("coordinates", [])
 
     if len(coordinates) < 2:
-        st.error("The API returned an invalid route with too few coordinates.")
+        st.error("The API returned an invalid route.")
     else:
         st.success("Route Computed Successfully")
 
