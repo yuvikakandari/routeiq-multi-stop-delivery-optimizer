@@ -1,5 +1,25 @@
+# Python virtual environment
 .venv/
+
+# Python cache
 __pycache__/
-*.pyc
-.pytest_cache/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
+
+# Model artifacts
+models/
+*.pkl
+
+# Cached graph files
+cache/
+data/*.graphml
 *.db
