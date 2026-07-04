@@ -1,6 +1,6 @@
-# RouteIQ — Scenario-Based Multi-Stop Delivery Route Optimizer
+# RouteIQ - Scenario-Based Multi-Stop Delivery Route Optimizer
 
-A decision-support system that compares a distance-only delivery plan with a simulated-congestion, ML-weighted routing plan for the same multi-stop delivery batch.
+A decision support system that compares a distance only delivery plan with a simulated-congestion, ML weighted routing plan for the same multi stop delivery batch.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ A decision-support system that compares a distance-only delivery plan with a sim
 
 ## 1. Project Overview
 
-A decision-support system built to evaluate route optimization trade-offs among overall physical distance, predicted travel cost surfaces, and simulated ETAs under controlled congestion scenarios. A FastAPI backend snaps coordinate payloads to real-world OpenStreetMap driving graphs, applies an offline-trained XGBoost regressor model to calculate scenario-specific segment travel costs, and routes deliveries through a custom heap-based Dijkstra pathfinding engine. The system resolves combinatorial delivery sequences across a central depot and 3–6 user-selected drops using a nearest-neighbor sequencing heuristic, logging execution matrices directly to a local SQLite database for historical experiment tracking.
+A decision-support system built to evaluate route optimization trade offs among overall physical distance, predicted travel cost surfaces, and simulated ETAs under controlled congestion scenarios. A FastAPI backend snaps coordinate payloads to real world OpenStreetMap driving graphs, applies an offline trained XGBoost regressor model to calculate scenario specific segment travel costs, and routes deliveries through a custom heap based Dijkstra pathfinding engine. The system resolves combinatorial delivery sequences across a central depot and 3–6 user selected drops using a nearest neighbor sequencing heuristic, logging execution matrices directly to a local SQLite database for historical experiment tracking.
 
 ## 2. Architecture Diagram
 
@@ -34,9 +34,9 @@ Model Inference Pipeline
 - Apply controlled congestion scenario multipliers to compute segment costs
       ↓                                    
 Optimization Core Engine
-- Build all-pairs cost matrix across active batch destinations
-- Execute Custom Heap-Based Dijkstra solver for least-cost paths
-- Resolve deployment sequence via Nearest-Neighbor Tour Heuristic
+- Build all pairs cost matrix across active batch destinations
+- Execute Custom Heap-Based Dijkstra solver for least cost paths
+- Resolve deployment sequence via Nearest Neighbor Tour Heuristic
       ↓                              
 Persistence & Rendering Layer
 - Write structural execution metrics to local SQLite ledger
@@ -70,7 +70,7 @@ End-to-end flow: Every request starts at the Streamlit frontend console where a 
 
 **Prerequisites:** Python 3.10+, Git, active terminal environment
 
-### Step 1 — Clone and set up environment:
+### Step 1 - Clone and set up environment:
 
 ```powershell
 git clone <your-repo-url>
@@ -92,7 +92,7 @@ pip install geopy
 
 ```
 
-### Step 2 — Start the FastAPI Backend Daemon:
+### Step 2 - Start the FastAPI Backend Daemon:
 
 ```powershell
 uvicorn backend.main:app --reload
@@ -101,7 +101,7 @@ uvicorn backend.main:app --reload
 
 *(This initializes the core web server loop and runs the API engine locally on [http://127.0.0.1:8000](https://www.google.com/search?q=http://127.0.0.1:8000))*
 
-### Step 3 — Launch the Dashboard Control Room:
+### Step 3 - Launch the Dashboard Control Room:
 
 Open a secondary independent terminal window, activate the `.venv` environment, and execute:
 
@@ -112,7 +112,7 @@ streamlit run frontend/app.py
 
 The terminal pipeline will automatically open an interactive web browser session targeting your local dashboard control panel at `http://localhost:8501`.
 
-### Step 4 — Run Optimization Experiments:
+### Step 4 - Run Optimization Experiments:
 
 1. Select a specific operational traffic template from the **Current Congestion Footprint** dropdown.
 2. Enter a localized address inside the **Location Search Integration** bar (e.g., `"Connaught Place"`) or click directly on the interactive map canvas to drop 3 to 6 active pins.
